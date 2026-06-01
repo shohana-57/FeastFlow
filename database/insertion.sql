@@ -96,3 +96,54 @@ INSERT INTO inventory (id, ingredient_name, quantity, unit, min_stock)
 VALUES (inventory_seq.NEXTVAL, 'Sugar', 15, 'kg', 3);
 
 COMMIT;
+
+-- Orders Insert
+INSERT INTO orders (id, table_id, customer_id, status)
+VALUES (orders_seq.NEXTVAL, 1, 4, 'pending');
+
+INSERT INTO orders (id, table_id, customer_id, status)
+VALUES (orders_seq.NEXTVAL, 2, 5, 'preparing');
+
+INSERT INTO orders (id, table_id, customer_id, status)
+VALUES (orders_seq.NEXTVAL, 3, 4, 'paid');
+
+COMMIT;
+
+-- Order Items Insert
+INSERT INTO order_items (id, order_id, menu_item_id, quantity, unit_price)
+VALUES (order_items_seq.NEXTVAL, 1, 1, 2, 180);
+
+INSERT INTO order_items (id, order_id, menu_item_id, quantity, unit_price)
+VALUES (order_items_seq.NEXTVAL, 1, 5, 2, 40);
+
+INSERT INTO order_items (id, order_id, menu_item_id, quantity, unit_price)
+VALUES (order_items_seq.NEXTVAL, 2, 3, 1, 150);
+
+INSERT INTO order_items (id, order_id, menu_item_id, quantity, unit_price)
+VALUES (order_items_seq.NEXTVAL, 3, 2, 1, 200);
+
+COMMIT;
+
+-- Payments Insert
+INSERT INTO payments (id, order_id, subtotal, vat, discount, total, method)
+VALUES (payments_seq.NEXTVAL, 3, 200, 30, 0, 230, 'cash');
+
+COMMIT;
+
+-- Staff Insert
+INSERT INTO staff (id, user_id, position, shift, salary)
+VALUES (staff_seq.NEXTVAL, 3, 'Waiter', 'morning', 15000);
+
+INSERT INTO staff (id, user_id, position, shift, salary)
+VALUES (staff_seq.NEXTVAL, 2, 'Manager', 'evening', 25000);
+
+COMMIT;
+
+-- Feedback Insert
+INSERT INTO feedback (id, customer_id, menu_item_id, rating, remarks)
+VALUES (feedback_seq.NEXTVAL, 4, 1, 5, 'Very delicious biryani!');
+
+INSERT INTO feedback (id, customer_id, menu_item_id, rating, remarks)
+VALUES (feedback_seq.NEXTVAL, 5, 3, 4, 'Good burger');
+
+COMMIT;
