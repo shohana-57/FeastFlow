@@ -1,5 +1,4 @@
 --daily selling report
-
 CREATE OR REPLACE VIEW daily_sales_summary AS
 SELECT 
     TRUNC(p.paid_at) AS sale_date,
@@ -10,7 +9,6 @@ JOIN payments p ON o.id = p.order_id
 GROUP BY TRUNC(p.paid_at);
 
 --popular items
-
 CREATE OR REPLACE VIEW popular_items AS
 SELECT 
     m.name,
@@ -21,7 +19,6 @@ JOIN order_items oi ON m.id = oi.menu_item_id
 GROUP BY m.name;
 
 --available items
-
 CREATE OR REPLACE VIEW available_menu AS
 SELECT 
     m.name,
