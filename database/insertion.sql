@@ -147,3 +147,25 @@ INSERT INTO feedback (id, customer_id, menu_item_id, rating, remarks)
 VALUES (feedback_seq.NEXTVAL, 5, 3, 4, 'Good burger');
 
 COMMIT;
+
+-- Menu Item Ingredients 
+
+INSERT INTO menu_item_ingredients (id, menu_item_id, inventory_id, quantity_needed)
+VALUES (menu_item_ingredients_seq.NEXTVAL, 1, 1, 0.3);
+
+INSERT INTO menu_item_ingredients (id, menu_item_id, inventory_id, quantity_needed)
+VALUES (menu_item_ingredients_seq.NEXTVAL, 1, 2, 0.2);
+
+INSERT INTO menu_item_ingredients (id, menu_item_id, inventory_id, quantity_needed)
+VALUES (menu_item_ingredients_seq.NEXTVAL, 2, 1, 0.3);
+
+INSERT INTO menu_item_ingredients (id, menu_item_id, inventory_id, quantity_needed)
+VALUES (menu_item_ingredients_seq.NEXTVAL, 2, 3, 0.25);
+
+INSERT INTO menu_item_ingredients (id, menu_item_id, inventory_id, quantity_needed)
+VALUES (menu_item_ingredients_seq.NEXTVAL, 3, 4, 0.1);
+
+INSERT INTO menu_item_ingredients (id, menu_item_id, inventory_id, quantity_needed)
+VALUES (menu_item_ingredients_seq.NEXTVAL, 3, 2, 0.15);
+
+COMMIT;
