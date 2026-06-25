@@ -18,10 +18,10 @@ COMMIT;
 
 --categories insertion
 INSERT INTO categories (id, name, description)
-VALUES (categories_seq.NEXTVAL, 'Rice & Biryani', 'All rice and biryani items');
+VALUES (categories_seq.NEXTVAL, 'Rice and Biryani', 'All rice and biryani items');
 
 INSERT INTO categories (id, name, description)
-VALUES (categories_seq.NEXTVAL, 'Burger & Sandwich', 'Fast food items');
+VALUES (categories_seq.NEXTVAL, 'Burger and Sandwich', 'Fast food items');
 
 INSERT INTO categories (id, name, description)
 VALUES (categories_seq.NEXTVAL, 'Drinks', 'Hot and cold beverages');
@@ -30,7 +30,7 @@ INSERT INTO categories (id, name, description)
 VALUES (categories_seq.NEXTVAL, 'Desserts', 'Sweet items');
 
 INSERT INTO categories (id, name, description)
-VALUES (categories_seq.NEXTVAL, 'Soup & Salad', 'Healthy options');
+VALUES (categories_seq.NEXTVAL, 'Soup and Salad', 'Healthy options');
 
 COMMIT;
 
