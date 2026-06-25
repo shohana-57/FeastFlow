@@ -179,8 +179,19 @@ CREATE TABLE feedback (
     FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
 );
 
+CREATE TABLE audit_log (
+    id          NUMBER PRIMARY KEY,
+    table_name  VARCHAR2(50),
+    action      VARCHAR2(50),
+    record_id   NUMBER,
+    changed_at  DATE DEFAULT SYSDATE
+);
+
+CREATE SEQUENCE audit_log_seq START WITH 1 INCREMENT BY 1;
+
 
 SELECT table_name FROM user_tables ORDER BY table_name;
+
 
 
 
