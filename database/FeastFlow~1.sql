@@ -150,22 +150,6 @@ START WITH 1
 INCREMENT BY 1;
 
 
-
-CREATE SEQUENCE feedback_seq
-START WITH 1
-INCREMENT BY 1;
-
-CREATE TABLE feedback (
-    id           NUMBER PRIMARY KEY,
-    customer_id  NUMBER NOT NULL,
-    menu_item_id NUMBER NOT NULL,
-    rating       NUMBER,
-    remarks      VARCHAR2(500),
-    created_at   DATE DEFAULT SYSDATE
-);
-
-drop table feedback;
-
 CREATE TABLE feedback (
     id           NUMBER PRIMARY KEY,
     customer_id  NUMBER NOT NULL,
@@ -178,6 +162,11 @@ CREATE TABLE feedback (
     CONSTRAINT fk_feedback_menu 
     FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
 );
+
+
+CREATE SEQUENCE feedback_seq
+START WITH 1
+INCREMENT BY 1;
 
 CREATE TABLE audit_log (
     id          NUMBER PRIMARY KEY,
