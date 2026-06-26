@@ -45,5 +45,10 @@ BEGIN
     WHERE id = p_order_id;
     
     COMMIT;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        ROLLBACK;
+        RAISE_APPLICATION_ERROR(-20001, 'Payment failed, transaction rolled back');
 END;
 /
