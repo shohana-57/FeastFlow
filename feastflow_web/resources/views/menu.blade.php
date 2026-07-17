@@ -74,7 +74,7 @@
 </head>
 <body>
 
-{{-- Navbar --}}
+<!-- {{-- Navbar --}} -->
 <nav class="navbar navbar-dark mb-4">
     <div class="container">
         <span class="navbar-brand fw-bold fs-3">🍽️ FeastFlow</span>
@@ -88,12 +88,12 @@
 <div class="container-fluid px-4">
     <div class="row">
 
-        {{-- Left Sidebar Filter --}}
+        <!-- Left Sidebar Filter -->
         <div class="col-md-3 mb-4">
             <div class="sidebar-card">
                 <p class="filter-title"><i class="bi bi-funnel"></i> Filter Menu</p>
 
-                {{-- Category Filter --}}
+                <!-- Category Filter -->
                 <p class="fw-bold text-muted small mb-2">CATEGORY</p>
                 <div class="d-flex flex-column gap-2 mb-4">
                     <a href="/menu" class="btn btn-outline-danger btn-sm text-start">
@@ -116,7 +116,7 @@
                     </a>
                 </div>
 
-                {{-- Price Filter --}}
+                <!-- Price Filter -->
                 <p class="fw-bold text-muted small mb-2">PRICE RANGE</p>
                 <form method="GET" action="/menu">
                     <div class="d-flex gap-2 mb-2">
@@ -130,10 +130,10 @@
             </div>
         </div>
 
-        {{-- Main Content --}}
+        <!-- {{-- Main Content --}} -->
         <div class="col-md-9">
 
-            {{-- Search and Sort --}}
+            <!-- Search and Sort -->
             <div class="search-section">
                 <form method="GET" action="/menu">
                     <div class="row g-2 align-items-center">
@@ -168,17 +168,33 @@
                 </form>
             </div>
 
-            {{-- Results Count --}}
+            <!-- {{-- Results Count --}} -->
             <p class="text-muted mb-3">
                 Showing <strong>{{ count($menu) }}</strong> items
             </p>
 
-            {{-- Menu Cards --}}
+            <!-- {{-- Menu Cards --}} -->
             <div class="row g-4">
                 @forelse($menu as $item)
                     <div class="col-md-4">
                         <div class="card menu-card">
-                            <div class="card-img-placeholder">🍽️</div>
+                          @php
+                             $images = [
+                                  'Chicken Biryani'  => 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&q=80',
+                                  'Beef Tehari'      => 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=400&q=80',
+                                 'Chicken Burger'   => 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80',
+                                  'Beef Burger'      => 'https://images.unsplash.com/photo-1586816001966-79b736744398?w=400&q=80',
+                                  'Coca Cola'        => 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&q=80',
+                                  'Fresh Lemonade'   => 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&q=80',
+                                  'Chocolate Cake'   => 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80',
+                                 'Chicken Soup'     => 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80',
+                                ];
+                              $img = $images[$item->name] ?? 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80';
+                             @endphp
+
+                           <img src="{{ $img }}"
+                           alt="{{ $item->name }}"
+                          style="width:100%; height:180px; object-fit:cover; border-radius:12px 12px 0 0;">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <h5 class="card-title mb-0">{{ $item->name }}</h5>
