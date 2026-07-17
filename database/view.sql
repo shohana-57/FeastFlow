@@ -21,8 +21,12 @@ GROUP BY m.name;
 --available items
 CREATE OR REPLACE VIEW available_menu AS
 SELECT 
+    m.id,
     m.name,
     m.price,
+    m.description,
+    m.image,
+    m.status,
     c.name AS category
 FROM menu_items m
 JOIN categories c ON m.category_id = c.id
