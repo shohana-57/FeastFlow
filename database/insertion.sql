@@ -169,3 +169,31 @@ INSERT INTO menu_item_ingredients (id, menu_item_id, inventory_id, quantity_need
 VALUES (menu_item_ingredients_seq.NEXTVAL, 3, 2, 0.15);
 
 COMMIT;
+
+SET DEFINE OFF;
+
+UPDATE menu_items SET image = 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=400&q=80'
+WHERE name = 'Chicken Biryani';
+
+UPDATE menu_items SET image = 'https://images.unsplash.com/photo-1596797038530-2c107229654b?w=400&q=80'
+WHERE name = 'Beef Tehari';
+
+UPDATE menu_items SET image = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80'
+WHERE name = 'Chicken Burger';
+
+UPDATE menu_items SET image = 'https://images.unsplash.com/photo-1586816001966-79b736744398?w=400&q=80'
+WHERE name = 'Beef Burger';
+
+UPDATE menu_items SET image = 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&q=80'
+WHERE name = 'Coca Cola';
+
+UPDATE menu_items SET image = 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=400&q=80'
+WHERE name = 'Fresh Lemonade';
+
+UPDATE menu_items SET image = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=80'
+WHERE name = 'Chocolate Cake';
+
+UPDATE menu_items SET image = 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400&q=80'
+WHERE name = 'Chicken Soup';
+
+COMMIT;
