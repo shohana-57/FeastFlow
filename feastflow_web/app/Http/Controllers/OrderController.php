@@ -46,6 +46,163 @@ class OrderController extends Controller
         return count($order) > 0 ? $order[0] : null;
     }
 
+    protected function getAvailableTables()
+    {
+        return DB::select(
+            "SELECT * FROM restaurant_tables WHERE status = 'free' ORDER BY table_number"
+        );
+    }
+
+    protected function getOrderList()
+    {
+        $userId = session('user_id');
+        $role = session('user_role');
+
+        $baseQuery = "SELECT o.id, o.status, o.table_id, o.customer_id, u.name AS customer_name,
+                             NVL(SUM(oi.quantity * oi.unit_price), 0) AS total,
+                             o.created_at
+                      FROM orders o
+                      JOIN users u ON o.customer_id = u.id
+                      LEFT JOIN order_items oi ON oi.order_id = o.id";
+
+        if ($role === 'waiter' || $role === 'admin' || $role === 'manager') {
+            $baseQuery .= " GROUP BY o.id, o.status, o.table_id, o.customer_id, u.name, o.created_at
+                             ORDER BY o.created_at DESC";
+            return DB::select($baseQuery);
+        }
+
+        $baseQuery .= " WHERE o.customer_id = ?
+                         GROUP BY o.id, o.status, o.table_id, o.customer_id, u.name, o.created_at
+                         ORDER BY o.created_at DESC";
+
+        return DB::select($baseQuery, [$userId]);
+    }
+
+    public function showBookingForm(Request $request)
+    {
+        if (!session('user_id')) {
+            return redirect('/login')->with('error', 'Please log in to book a table.');
+        }
+
+        $tables = $this->getAvailableTables();
+
+        return view('booking.create', ['tables' => $tables]);
+    }
+
+    public function storeBooking(Request $request)
+    {
+        if (!session('user_id')) {
+            return redirect('/login')->with('error', 'Please log in to book a table.');
+        }
+
+        $request->validate([
+            'table_id' => 'required|integer',
+        ]);
+
+        $tableId = $request->input('table_id');
+        $customerId = session('user_id');
+
+        $table = DB::select(
+            "SELECT * FROM restaurant_tables WHERE id = ? AND status = 'free'",
+            [$tableId]
+        );
+
+        if (count($table) === 0) {
+            return back()->with('error', 'Selected table is not available.');
+        }
+
+        DB::statement(
+            "INSERT INTO bookings (id, table_id, customer_id, status, booked_at)
+             VALUES (bookings_seq.NEXTVAL, ?, ?, 'reserved', SYSDATE)",
+            [$tableId, $customerId]
+        );
+        DB::statement(
+            "UPDATE restaurant_tables SET status = 'reserved' WHERE id = ?",
+            [$tableId]
+        );
+
+        return redirect('/booking/create')->with('success', 'Table booked successfully. We will reserve it for you.');
+    }
+
+    public function index(Request $request)
+    {
+        if (!session('user_id')) {
+            return redirect('/login')->with('error', 'Please log in to view orders.');
+        }
+
+        $orders = $this->getOrderList();
+        return view('orders.index', ['orders' => $orders]);
+    }
+
+    public function show($id)
+    {
+        if (!session('user_id')) {
+            return redirect('/login')->with('error', 'Please log in to view order details.');
+        }
+
+        $userId = session('user_id');
+        $role = session('user_role');
+
+        $order = DB::select(
+            "SELECT o.id, o.table_id, o.customer_id, o.status, o.created_at,
+                    u.name AS customer_name, u.role AS customer_role
+             FROM orders o
+             JOIN users u ON u.id = o.customer_id
+             WHERE o.id = ?",
+            [$id]
+        );
+
+        if (count($order) === 0) {
+            return redirect('/orders')->with('error', 'Order not found.');
+        }
+
+        $order = $order[0];
+
+        if ($role !== 'waiter' && $role !== 'admin' && $role !== 'manager' && $order->customer_id !== $userId) {
+            return redirect('/orders')->with('error', 'You do not have access to this order.');
+        }
+
+        $items = DB::select(
+            "SELECT oi.quantity, oi.unit_price, m.name AS item_name,
+                    (oi.quantity * oi.unit_price) AS item_subtotal
+             FROM order_items oi
+             JOIN menu_items m ON oi.menu_item_id = m.id
+             WHERE oi.order_id = ?",
+            [$id]
+        );
+
+        $payment = DB::select("SELECT * FROM payments WHERE order_id = ?", [$id]);
+        $payment = count($payment) ? $payment[0] : null;
+
+        return view('orders.show', [
+            'order' => $order,
+            'items' => $items,
+            'payment' => $payment,
+        ]);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        if (!session('user_id')) {
+            return redirect('/login')->with('error', 'Please log in to update order status.');
+        }
+
+        $role = session('user_role');
+        if ($role !== 'waiter' && $role !== 'admin' && $role !== 'manager') {
+            return redirect('/orders')->with('error', 'Unauthorized to update orders.');
+        }
+
+        $request->validate([
+            'status' => 'required|in:pending,preparing,ready,paid',
+        ]);
+
+        $status = $request->input('status');
+
+        DB::statement("UPDATE orders SET status = ? WHERE id = ?", [$status, $id]);
+
+        return redirect('/orders/' . $id)->with('success', 'Order status updated to ' . $status . '.');
+    }
+
     public function create(Request $request)
     {
         if (!session('user_id')) {
@@ -59,7 +216,9 @@ class OrderController extends Controller
             return redirect('/menu')->with('error', 'Menu item not found.');
         }
 
-        return view('order.create', ['item' => $item]);
+        $availableTables = $this->getAvailableTables();
+
+        return view('order.create', ['item' => $item, 'tables' => $availableTables]);
     }
 
     public function store(Request $request)
@@ -71,6 +230,7 @@ class OrderController extends Controller
         $request->validate([
             'item_id' => 'required|integer',
             'quantity' => 'required|integer|min:1',
+            'table_id' => 'required|integer',
         ]);
 
         $item = $this->findMenuItem($request->input('item_id'));
@@ -79,15 +239,28 @@ class OrderController extends Controller
         }
 
         $customerId = session('user_id');
+        $tableId = intval($request->input('table_id'));
+
+        $table = DB::select("SELECT * FROM restaurant_tables WHERE id = ? AND status = 'free'", [$tableId]);
+        if (count($table) === 0) {
+            return back()->with('error', 'Selected table is not available.');
+        }
 
         DB::statement(
             "INSERT INTO orders (id, table_id, customer_id, status)
              VALUES (orders_seq.NEXTVAL, ?, ?, 'pending')",
-            [1, $customerId]
+            [$tableId, $customerId]
         );
 
         $orderIdRow = DB::select("SELECT orders_seq.CURRVAL AS id FROM dual");
         $orderId = $orderIdRow[0]->id;
+
+        if ($tableId !== null) {
+            DB::statement(
+                "UPDATE restaurant_tables SET status = 'occupied' WHERE id = ?",
+                [$tableId]
+            );
+        }
 
         DB::statement(
             "INSERT INTO order_items (id, order_id, menu_item_id, quantity, unit_price)
@@ -139,16 +312,24 @@ class OrderController extends Controller
             return redirect('/menu')->with('error', 'No order found to complete payment.');
         }
 
-        DB::statement(
-            "INSERT INTO payments (id, order_id, subtotal, vat, discount, total, method)
-             VALUES (payments_seq.NEXTVAL, ?, ?, 0, 0, ?, ?)",
-            [$order->id, $order->item_subtotal, $order->item_subtotal, $request->input('payment_method')]
-        );
+        try {
+            DB::statement("BEGIN generate_bill(?, ?, ?); END;", [$order->id, 0, $request->input('payment_method')]);
+        } catch (\Exception $e) {
+            $subtotalRow = DB::select(
+                "SELECT NVL(SUM(quantity * unit_price), 0) AS subtotal FROM order_items WHERE order_id = ?",
+                [$order->id]
+            );
+            $subtotal = $subtotalRow[0]->subtotal ?? 0;
+            $vat = $subtotal * 0.15;
+            $total = $subtotal + $vat;
 
-        DB::statement(
-            "UPDATE orders SET status = 'paid' WHERE id = ?",
-            [$order->id]
-        );
+            DB::statement(
+                "INSERT INTO payments (id, order_id, subtotal, vat, discount, total, method)
+                 VALUES (payments_seq.NEXTVAL, ?, ?, ?, 0, ?, ?)",
+                [$order->id, $subtotal, $vat, $total, $request->input('payment_method')]
+            );
+            DB::statement("UPDATE orders SET status = 'paid' WHERE id = ?", [$order->id]);
+        }
 
         session(['payment_data' => [
             'order_id' => $order->id,

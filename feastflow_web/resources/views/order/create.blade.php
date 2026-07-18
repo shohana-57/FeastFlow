@@ -53,16 +53,16 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Your Name</label>
-                            <input type="text" name="customer_name" class="form-control" value="{{ old('customer_name') }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Phone Number</label>
-                            <input type="text" name="phone" class="form-control" value="{{ old('phone') }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Delivery Address</label>
-                            <textarea name="address" class="form-control" rows="3" required>{{ old('address') }}</textarea>
+                            <label class="form-label">Select Table</label>
+                            <select name="table_id" class="form-select" required>
+                                <option value="">Choose a table</option>
+                                @foreach($tables as $table)
+                                    <option value="{{ $table->id }}"
+                                        {{ old('table_id') == $table->id ? 'selected' : '' }}>
+                                        Table {{ $table->table_number }} ({{ $table->capacity }} seats)
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Special Instructions</label>

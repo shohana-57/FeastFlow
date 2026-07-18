@@ -107,6 +107,8 @@
                         {{ strtoupper(session('user_role')) }}
                     </span>
                 </span>
+                <a href="/orders" class="btn btn-outline-light btn-sm">My Orders</a>
+                <a href="/booking/create" class="btn btn-outline-light btn-sm">Book Table</a>
                 @if(session('user_role') == 'admin' || session('user_role') == 'manager')
                     <a href="/dashboard" class="btn btn-outline-light btn-sm">Dashboard</a>
                 @endif

@@ -202,6 +202,7 @@
                                     <form method="POST"
                                           action="/admin/menu/update/{{ $item->id }}">
                                         @csrf
+                                        @method('PUT')
                                         <div class="modal-body">
                                             <div class="mb-3">
                                                 <label class="form-label fw-bold">Category</label>

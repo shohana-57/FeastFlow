@@ -14,37 +14,34 @@ class AuthController extends Controller
     }
 
     public function login(Request $request)
-{
-    $email = $request->email;
-    $password = $request->password;
+    {
+        $email = $request->email;
+        $password = $request->password;
 
-    $user = DB::select(
-        'SELECT * FROM users WHERE email = ? AND password = ?',
-        [$email, $password]
-    );
+        $user = DB::select(
+            'SELECT * FROM users WHERE email = ? AND password = ?',
+            [$email, $password]
+        );
 
-    if (count($user) > 0) {
-        session(['user_id'   => $user[0]->id]);
-        session(['user_name' => $user[0]->name]);
-        session(['user_role' => $user[0]->role]);
+        if (count($user) > 0) {
+            session(['user_id'   => $user[0]->id]);
+            session(['user_name' => $user[0]->name]);
+            session(['user_role' => $user[0]->role]);
 
-        // Role অনুযায়ী আলাদা Page এ যাবে
-        $role = $user[0]->role;
+            $role = $user[0]->role;
 
-        if ($role == 'admin' || $role == 'manager') {
-            return redirect('/dashboard');}
-        //  elseif ($role == 'waiter') {
-        //     return redirect('/orders');}
-          else {
-            return redirect('/menu');
+            if ($role == 'admin' || $role == 'manager') {
+                return redirect('/dashboard');
+            } elseif ($role == 'waiter') {
+                return redirect('/orders');
+            } else {
+                return redirect('/menu');
+            }
         }
 
-    } else {
         return back()->with('error', 'Invalid email or password!');
     }
-}
 
-  
     public function logout()
     {
         session()->flush();

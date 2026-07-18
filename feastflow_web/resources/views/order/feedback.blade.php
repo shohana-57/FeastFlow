@@ -27,9 +27,9 @@
 
                     <div class="mb-4 p-3 bg-light rounded">
                         <h6>Order completed</h6>
-                        <p class="mb-1"><strong>Item:</strong> {{ $order['item_name'] }}</p>
-                        <p class="mb-1"><strong>Payment Method:</strong> {{ ucfirst($payment['payment_method']) }}</p>
-                        <p class="mb-0"><strong>Amount Paid:</strong> {{ $order['total'] }} TK</p>
+                        <p class="mb-1"><strong>Item:</strong> {{ $order->item_name }}</p>
+                        <p class="mb-1"><strong>Payment Method:</strong> {{ ucfirst($payment->method) }}</p>
+                        <p class="mb-0"><strong>Amount Paid:</strong> {{ $payment->total }} TK</p>
                     </div>
 
                     @if($errors->any())
@@ -44,7 +44,7 @@
 
                     <form method="POST" action="/order/feedback">
                         @csrf
-                        <input type="hidden" name="order_id" value="{{ $order['id'] }}">
+                        <input type="hidden" name="order_id" value="{{ $order->id }}">
                         <div class="mb-3">
                             <label class="form-label">Rating</label>
                             <select name="rating" class="form-select" required>

@@ -45,6 +45,17 @@
         </div>
     @endif
 
+    @if($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+
     <div class="row g-4">
 
         {{-- Add New Item Form --}}
@@ -59,29 +70,32 @@
                         <label class="form-label fw-bold">Ingredient Name</label>
                         <input type="text" name="ingredient_name" 
                                class="form-control" required
-                               placeholder="e.g. Tomato">
+                               placeholder="e.g. Tomato"
+                               value="{{ old('ingredient_name') }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Quantity</label>
                         <input type="number" name="quantity" 
                                class="form-control" required
-                               placeholder="e.g. 10" step="0.01">
+                               placeholder="e.g. 10" step="0.01"
+                               value="{{ old('quantity') }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Unit</label>
                         <select name="unit" class="form-select" required>
-                            <option value="kg">kg</option>
-                            <option value="g">g</option>
-                            <option value="liter">liter</option>
-                            <option value="pcs">pcs</option>
-                            <option value="dozen">dozen</option>
+                            <option value="kg" {{ old('unit') == 'kg' ? 'selected' : '' }}>kg</option>
+                            <option value="g" {{ old('unit') == 'g' ? 'selected' : '' }}>g</option>
+                            <option value="liter" {{ old('unit') == 'liter' ? 'selected' : '' }}>liter</option>
+                            <option value="pcs" {{ old('unit') == 'pcs' ? 'selected' : '' }}>pcs</option>
+                            <option value="dozen" {{ old('unit') == 'dozen' ? 'selected' : '' }}>dozen</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Minimum Stock Alert</label>
                         <input type="number" name="min_stock" 
                                class="form-control" required
-                               placeholder="e.g. 5" step="0.01">
+                               placeholder="e.g. 5" step="0.01"
+                               value="{{ old('min_stock') }}">
                     </div>
                     <button type="submit" class="btn btn-danger w-100">
                         <i class="bi bi-plus"></i> Add Ingredient
@@ -170,6 +184,7 @@
                                     <form method="POST" 
                                           action="/inventory/update/{{ $item->id }}">
                                         @csrf
+                                        @method('PUT')
                                         <div class="modal-body">
                                             <div class="mb-3">
                                                 <label class="form-label fw-bold">Ingredient Name</label>

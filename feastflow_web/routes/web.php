@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
@@ -22,6 +21,12 @@ Route::get('/admin/menu', [MenuController::class, 'adminIndex']);
 Route::post('/admin/menu', [MenuController::class, 'store']);
 Route::put('/admin/menu/update/{id}', [MenuController::class, 'update']);
 Route::post('/admin/menu/delete/{id}', [MenuController::class, 'destroy']);
+
+Route::get('/booking/create', [OrderController::class, 'showBookingForm']);
+Route::post('/booking', [OrderController::class, 'storeBooking']);
+Route::get('/orders', [OrderController::class, 'index']);
+Route::get('/orders/{id}', [OrderController::class, 'show']);
+Route::post('/orders/{id}/status', [OrderController::class, 'updateStatus']);
 
 Route::get('/order/create', [OrderController::class, 'create']);
 Route::post('/order', [OrderController::class, 'store']);
