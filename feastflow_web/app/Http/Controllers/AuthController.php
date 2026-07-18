@@ -32,10 +32,10 @@ class AuthController extends Controller
         $role = $user[0]->role;
 
         if ($role == 'admin' || $role == 'manager') {
-            return redirect('/dashboard');
-        } elseif ($role == 'waiter') {
-            return redirect('/orders');
-        } else {
+            return redirect('/dashboard');}
+        //  elseif ($role == 'waiter') {
+        //     return redirect('/orders');}
+          else {
             return redirect('/menu');
         }
 

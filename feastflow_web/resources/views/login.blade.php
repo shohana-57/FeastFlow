@@ -38,7 +38,7 @@
                 </form>
 
                 <p class="text-center mt-3 text-muted">
-                    Try: admin@feastflow.com / 1234
+                    Don't have an account? <a href="/register" class="text-danger">Register here</a>
                 </p>
 
             </div>
